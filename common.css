@@ -18,29 +18,18 @@ body {height: 100%; margin: 0px; padding: 0px; background-color: #000000;}
 .points {white-space: nowrap;}
 .point {display: inline-block; font: bold 220px sans-serif; width: 170px; margin: 0px 25px; text-align: center; vertical-align: middle; cursor: pointer;}
 .shido {display: inline-block; width: 100px; height: 130px; margin: 0px; vertical-align: middle; cursor: pointer;}
-/*
-#group {position: absolute; top: 20%; left: 3%; font: bold 60px sans-serif; white-space: nowrap; overflow: hidden; color: #ffffff;}
-#round {position: absolute; bottom: 20%; left: 3%; font: bold 60px sans-serif; white-space: nowrap; overflow: hidden; color: #ffffff;}
-*/
 
 #group *, #round * {background: none; border: none; width: 100%; font: bold 60px sans-serif; color: #ffffff;}
+#groupround_table {position: absolute; bottom: 15%; left: 3%; width: 45%;}
+#groupround_table td {padding-bottom: 20px;}
 
-#groupround_table {
-    position: absolute;
-    bottom: 15%;
-    left: 3%;
-    width: 45%;
-}
-
-#groupround_table td {
-    padding-bottom: 20px;
-}
-
-#fighttime {position: absolute; top: 48%; right: 20%; height: 1em; margin-top: -0.5em; font: bold 220px sans-serif; white-space: nowrap; color: #cc0000; cursor: pointer;}
+#fighttime {font: bold 220px sans-serif; width:fit-content;}
 #osaetime {position: absolute; top: 50%; right: 5%; height: 1em; margin-top: -0.5em; font: bold 150px sans-serif; text-align: right; white-space: nowrap; color: #8888ff; cursor: pointer;}
 #goldenscore {display: none; position: absolute; top: 50%; right: 15%; height: 2em; margin-top: -0.8em; font: bold 100px sans-serif; text-align: center; line-height: 90%; color: #f0c115;}
 
 #spectatorviewbtn {position: absolute; bottom: 35px; left: 8px; font: normal 25px sans-serif; color: #ffffff; cursor: pointer;}
 #spectatorviewbtn:hover, .clockcontrol:hover {color: #dd0000;}
+
+#fighttime_container {position: absolute; width: 30%; top: 10%; right: 20%; height: 80%; margin-top: -0.5em; white-space: nowrap; color: #cc0000; cursor: pointer;}
 
 div {-moz-user-select: -moz-none; -khtml-user-select: none; -webkit-user-select: none; -o-user-select: none; user-select: none;}

@@ -427,8 +427,9 @@ function init() {
     sound_audio[4] = document.getElementById("sound4");
     
     window.addEventListener("message", receiveMessage, false);
-
+    window.addEventListener("resize", resizeText, false);
     reset();
+    resizeText();
 }
 
 function receiveMessage(event) {
@@ -656,3 +657,25 @@ document.oncontextmenu = function () { // IE8
 window.addEventListener('contextmenu', function (e) { // Not compatible with IE < 9
     e.preventDefault();
 }, false);
+
+function resizeText() {
+    var containerWidth = document.getElementById('fighttime_container').offsetWidth;
+    var textElement = document.getElementById('fighttime');
+    var fontSize = 1; // Start with the smallest font size
+    
+    textElement.style.fontSize = fontSize + 'px';
+    console.log(textElement.offsetWidth , containerWidth);
+    // Increment font size until the text fits within the container width
+    while (textElement.offsetWidth < containerWidth) {
+        fontSize++;
+        textElement.style.fontSize = fontSize + 'px';
+        console.log(textElement.offsetWidth , containerWidth);
+    }
+    
+    // Decrement font size if the last increment caused the text to overflow
+    while (textElement.offsetWidth > containerWidth) {
+        fontSize--;
+        textElement.style.fontSize = fontSize + 'px';
+    }
+    console.log("Set fontsize to" + fontSize + "px");
+}
