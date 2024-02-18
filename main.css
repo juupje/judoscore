@@ -1,0 +1,23 @@
+button { background: none; color: inherit; border: none; padding: 0; font: inherit; cursor: pointer; outline: inherit;}
+
+.plus {color: #0f840f; font-size: 3em;}
+.minus {color: #b11919; font-size: 4em; margin-top: -25px;}
+
+.points {text-align: center;}
+.point {font-size: 9em; margin-top: -30px; margin-bottom: -30px;}
+
+.menutable {border: none; font: normal 12px sans-serif;}
+.menutable label {float: right;}
+.menutable th {min-width: 150px;}
+.menutable .center {text-align: center;}
+
+#menubtn {position: absolute; bottom: 8px; left: 8px; font: normal 25px sans-serif; color: #ffffff; cursor: pointer;}
+#menu {display: none; position: absolute; top: 5%; left: 5%; height: 85%; width: 85%; padding: 20px; border-radius: 15px; background-color: #cccccc; border: 2px solid #777777; font: normal 20px sans-serif; overflow: auto;}
+#menu h1 {font: bold 25px sans-serif;}
+#menubtnclose {position: absolute; top: 8px; right: 12px; font: normal 25px sans-serif; color: #000000; cursor: pointer;}
+#menubtnclose:hover, #menubtn:hover {color: #dd0000;}
+
+#group input, #round input {border: 2px solid white;}
+.clockcontrol {color: white; font-size: 3em;}
+#groupround_table td:last-child {width: 60px; text-align: right;}
+#osae_table {position: absolute; right: 1%; top: 25%; height: 50%;}
