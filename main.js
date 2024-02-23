@@ -351,7 +351,7 @@ function transmitTimes() {
         message = {"type": "time", "fighttime": fightTimeSec, "fightActive": fightActive,
                 "osaeTime": osaeTimeSec, "osaeActive": osaeActive,
                 "goldenScoreActive": goldenScoreActive};
-        spectatorScreen.postMessage(message, '*');
+        spectatorScreen.postMessage(message, "*");
     }
 }
 
@@ -359,7 +359,7 @@ function transmitPoints() {
     if(spectatorScreen) {
         message = {"type": "points", "ippons": ippons, "wazaris": wazaris, "yukos": yukos,
                    "shidos": shidos};
-        spectatorScreen.postMessage(message, '*');
+        spectatorScreen.postMessage(message, "*");
     }
 }
 
@@ -367,7 +367,7 @@ function transmitNames() {
     message = createFightInfo();
     message["type"] = "config";
     console.log(message);
-    spectatorScreen.postMessage(message, '*');
+    spectatorScreen.postMessage(message, "*");
 }
 
 /*
@@ -433,6 +433,11 @@ function init() {
 }
 
 function receiveMessage(event) {
+    console.log("Received message!", event);
+    console.log(event.origin !== window.location.origin, event.origin != "null");
+    if (event.origin !== window.location.origin && event.origin != "null") {
+        return;
+    }
     if(event.data == "requestConfig") {
         if(spectatorScreen) {
             transmitNames();
@@ -664,12 +669,10 @@ function resizeText() {
     var fontSize = 1; // Start with the smallest font size
     
     textElement.style.fontSize = fontSize + 'px';
-    console.log(textElement.offsetWidth , containerWidth);
     // Increment font size until the text fits within the container width
     while (textElement.offsetWidth < containerWidth) {
         fontSize++;
         textElement.style.fontSize = fontSize + 'px';
-        console.log(textElement.offsetWidth , containerWidth);
     }
     
     // Decrement font size if the last increment caused the text to overflow
@@ -677,5 +680,4 @@ function resizeText() {
         fontSize--;
         textElement.style.fontSize = fontSize + 'px';
     }
-    console.log("Set fontsize to" + fontSize + "px");
 }

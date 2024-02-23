@@ -104,11 +104,11 @@ function init() {
 }
 
 function receiveMessage(event) {
-    if (event.origin !== window.location.origin) {
+    console.log("Received message!", event)
+    if (event.origin !== window.location.origin && event.origin != "null") {
         return;
     }
     const message = event.data;
-    console.log("Received message!", message)
     switch(message["type"]) {
         case "config":
             parseFightInfo(message);
@@ -190,12 +190,10 @@ function resizeText() {
     var fontSize = 1; // Start with the smallest font size
     
     textElement.style.fontSize = fontSize + 'px';
-    console.log(textElement.offsetWidth , containerWidth);
     // Increment font size until the text fits within the container width
     while (textElement.offsetWidth < containerWidth) {
         fontSize++;
         textElement.style.fontSize = fontSize + 'px';
-        console.log(textElement.offsetWidth , containerWidth);
     }
     
     // Decrement font size if the last increment caused the text to overflow
@@ -203,5 +201,4 @@ function resizeText() {
         fontSize--;
         textElement.style.fontSize = fontSize + 'px';
     }
-    console.log("Set fontsize to" + fontSize + "px");
 }
