@@ -14,6 +14,7 @@ var fightTimeSecConf; // default fight time limit
 var osaeTimeSecConf; // default osaekomi time limit
 var goldenScoreTimeSecConf; // golden score time limit (0=endless with incrementing fight clock)
 var bellNumConf; // index of bell sound type
+var autoScoreConf; // index of bell sound type
 
 var updateTimer; // timer for updating clocks
 
@@ -164,10 +165,13 @@ function increment(color, which) {
     var whiteBlue = (color == "white") ? 0 : 1;
     switch(which) {
         case "ippon":
-            ippons[whiteBlue] = Math.min(ippons[whiteBlue] + 1, 9);
+            ippons[whiteBlue] = Math.min(ippons[whiteBlue] + 1, autoScoreConf ? 1 : 9);
             break;
         case "wazari":
-            wazaris[whiteBlue] = Math.min(wazaris[whiteBlue] + 1, 9);
+            wazaris[whiteBlue] = Math.min(wazaris[whiteBlue] + 1, autoScoreConf ? 2 : 9);
+            if(autoScoreConf && wazaris[whiteBlue] == 2) {
+                ippons[whiteBlue] = 1;
+            }
             break;
         case "yuko":
             yukos[whiteBlue] = Math.min(yukos[whiteBlue] + 1, 99);
@@ -176,6 +180,7 @@ function increment(color, which) {
             shidos[whiteBlue] = Math.min(shidos[whiteBlue] + 1, 3);
             break;
     }
+    if(autoScoreConf) { winCondition(color, which); }
     drawPoints();
 }
 
@@ -208,16 +213,17 @@ function decrement(color, which) {
 */
 function ippon(e) {     
     var whiteBlue = (this.id == "white_ippon") ? 0 : 1;
-    
+    let maxippon = autoScoreConf ? 1 : 9
     switch(e.button) {
     case 0: // left mouse btn
-        ippons[whiteBlue] = Math.min(ippons[whiteBlue] + 1, 9);
+        ippons[whiteBlue] = Math.min(ippons[whiteBlue] + 1, maxippon);
     break;
     
     case 2: // right mouse btn
         ippons[whiteBlue] = Math.max(ippons[whiteBlue] - 1, 0);               
     break;
     }
+    if(autoScoreConf) { winCondition(whiteBlue==0 ? "white" : "blue", "ippon"); }
     drawPoints();
 }
 
@@ -227,16 +233,20 @@ function ippon(e) {
 */
 function wazari(e) {
     var whiteBlue = (this.id == "white_wazari") ? 0 : 1;
-    
+    let maxwazari = autoScoreConf ? 2 : 9
     switch(e.button) {
         case 0: // left mouse btn
-            wazaris[whiteBlue] = Math.min(wazaris[whiteBlue] + 1, 9);
+            wazaris[whiteBlue] = Math.min(wazaris[whiteBlue] + 1, maxwazari);
+            if(autoScoreConf && wazaris[whiteBlue] == 2) {
+                ippons[whiteBlue] = 1;
+            }
         break;
         
         case 2: // right mouse btn
             wazaris[whiteBlue] = Math.max(wazaris[whiteBlue] - 1, 0);               
         break;
     }
+    if(autoScoreConf) { winCondition(whiteBlue == 0 ? "white": "blue", "wazari"); }
     drawPoints();
 }
 
@@ -256,6 +266,7 @@ function yuko(e) {
         yukos[whiteBlue] = Math.max(yukos[whiteBlue] - 1, 0);               
         break;
     }
+    if(autoScoreConf) { winCondition(whiteBlue==0? "white": "blue", "yuko"); }
     drawPoints();
 }
 
@@ -275,7 +286,46 @@ function shido(e) {
             shidos[whiteBlue] = Math.max(shidos[whiteBlue] - 1, 0);               
         break;
     }
+    if(autoScoreConf) { winCondition(whiteBlue==0? "white": "blue", "shido"); }
     drawPoints();
+}
+
+function confirmWin(color) {
+    mate();
+    if(confirm("Did "+color+" win?")) win(color);
+    else {
+        autoScoreConf = false;
+        hajime();
+    }
+}
+
+function winCondition(color, trigger) {
+    setTimeout(() => {
+        if(goldenScoreActive) {
+            if(trigger != "shido") {
+                confirmWin(color);
+                return;
+            }
+        }
+        if(ippons[0] == 1 || shidos[1]==3) {
+            confirmWin("white");
+        } else if(ippons[1] == 1 || shidos[0]==3) {
+            confirmWin("blue");
+        }
+    }, 100);
+}
+
+function win(which) {
+    transmitWinMessage(which);
+    var div = document.getElementById("winner");
+    div.style.width = "100%";
+    div.style.height = "100%";
+    if(which == "blue") {
+        div.style.background = "#0000ff";
+    } else {
+        document.getElementById("blue").style.color = "black";
+        div.style.background = "#ffffff";
+    }
 }
 
 /*
@@ -368,6 +418,14 @@ function transmitNames() {
     message["type"] = "config";
     console.log(message);
     spectatorScreen.postMessage(message, "*");
+}
+
+function transmitWinMessage(color) {
+    if(spectatorScreen) {
+        message = {"type": "winner", "color": color};
+        console.log(message);
+        spectatorScreen.postMessage(message, "*");
+    }
 }
 
 /*
@@ -464,7 +522,14 @@ function reset() {
     
     resetFightTime();
     resetOsaeTime();
-    
+    document.getElementById("blue").style.color = "#ffffff";
+    var div = document.getElementById("winner");
+    div.style.width = "0%";
+    div.style.height = "0%";
+    div.style.background = "none"; 
+    if(spectatorScreen) {
+        postMessage({"type": "winner", "reset": true}, "*");
+    }
     draw();
 }
 
@@ -507,6 +572,7 @@ function toggleMenu() {
         osaeTimeSecConf = Math.max(1, parseInt(document.getElementById("menu_osaetime").value));
         goldenScoreTimeSecConf = Math.max(0, parseInt(document.getElementById("menu_goldenScoretime").value));
         bellNumConf = Math.max(0, Math.min(7, parseInt(document.getElementById("menu_bellnum").value)));
+        autoScoreConf = document.getElementById("menu_autoscore").checked;
         
         saveConfig();
         menu_div.style.display = "none";
@@ -518,6 +584,7 @@ function toggleMenu() {
         document.getElementById("menu_osaetime").value = osaeTimeSecConf;
         document.getElementById("menu_goldenScoretime").value = goldenScoreTimeSecConf;
         document.getElementById("menu_bellnum").value = bellNumConf;
+        document.getElementById("menu_autoscore").checked = autoScoreConf;
         
         document.getElementById("menu_fighttimecorrect").value = fightTimeSec; 
         document.getElementById("menu_osaetimecorrect").value = osaeTimeSec;
@@ -590,14 +657,27 @@ document.onkeypress = function(e) {
 function loadConfig() {
     var value = localStorage.getItem("judoscoreboardconfig");
     if(value) {
-        var config = value.split('|');
-        if(config.length == 5) {
-            matConf = parseInt(config[0]);
-            fightTimeSecConf = parseInt(config[1]);
-            osaeTimeSecConf = parseInt(config[2]);
-            goldenScoreTimeSecConf = parseInt(config[3]);
-            bellNumConf = parseInt(config[4]);
+        console.log("Read config", value);
+        try {
+            var config = JSON.parse(value);
+            matConf = config["matConf"] ?? 1;
+            fightTimeSecConf = config["fightTimeSecConf"] ?? 5*60;
+            osaeTimeSecConf = config["osaeTimeSecConf"] ?? 20;
+            goldenScoreTimeSecConf = config["goldenScoreTimeSecConf"] ?? 0;
+            bellNumConf = config["bellNumConf"] ?? 1;
+            autoScoreConf = config["autoScoreConf"] ?? true;
             return;
+        } catch(error) {
+            console.error(error);
+            var config = value.split('|');
+            if(config.length == 5) {
+                matConf = parseInt(config[0]);
+                fightTimeSecConf = parseInt(config[1]);
+                osaeTimeSecConf = parseInt(config[2]);
+                goldenScoreTimeSecConf = parseInt(config[3]);
+                bellNumConf = parseInt(config[4]);
+                return;
+            }
         }
     }
     
@@ -607,7 +687,7 @@ function loadConfig() {
     osaeTimeSecConf = 20;
     goldenScoreTimeSecConf = 0;
     bellNumConf = 1;
-    
+    autoScoreConf = true;
     toggleMenu();
 }
 
@@ -615,9 +695,9 @@ function loadConfig() {
 * Save config varaibles to local storage
 */
 function saveConfig() {
-    var config = [matConf, fightTimeSecConf, osaeTimeSecConf, goldenScoreTimeSecConf, bellNumConf];
+    var config = {matConf, fightTimeSecConf, osaeTimeSecConf, goldenScoreTimeSecConf, bellNumConf, autoScoreConf};
     if(localStorage)
-        localStorage.setItem("judoscoreboardconfig", config.join("|"));
+        localStorage.setItem("judoscoreboardconfig", JSON.stringify(config));
 }
 
 function createFightInfo() {

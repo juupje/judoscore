@@ -70,6 +70,18 @@ function drawTimes() {
         goldenScore_div.style.display = "none";
 }
 
+function win(which) {
+    var div = document.getElementById("winner");
+    div.style.width = "100%";
+    div.style.height = "100%";
+    if(which == "blue") {
+        div.style.background = "#0000ff";
+    } else {
+        document.getElementById("blue").style.color = "black";
+        div.style.background = "#ffffff";
+    }
+}
+
 /*
 * Init local variables and event handlers
 */
@@ -100,7 +112,7 @@ function init() {
     window.opener.postMessage("requestConfig", '*');
     window.addEventListener("resize", resizeText, false);
     reset();
-    resizeText();
+    setTimeout(()=> resizeText(), 100);
 }
 
 function receiveMessage(event) {
@@ -119,7 +131,15 @@ function receiveMessage(event) {
         case "points":
             parsePointsUpdate(message);
             break;
+        case "winner":
+            parseWinnerUpdate(message);
+            break;
     }
+}
+
+function parseWinnerUpdate(data) {
+    if("color" in data) win(data["color"]);
+    if("reset" in data && data["reset"]) reset();
 }
 
 function parsePointsUpdate(data) {
@@ -171,7 +191,14 @@ function reset() {
     osaeActive = false;
     goldenScoreActive = false;
     bellActive = false;
+
+    document.getElementById("blue").style.color = "#ffffff";
+    var div = document.getElementById("winner");
+    div.style.width = "0%";
+    div.style.height = "0%";
+    div.style.background = "none";
     draw();
+    resizeText();
 }
 
 /*
@@ -201,4 +228,5 @@ function resizeText() {
         fontSize--;
         textElement.style.fontSize = fontSize + 'px';
     }
+    console.log("Set fontsize to " + fontSize +"px");
 }

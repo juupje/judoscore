@@ -1,21 +1,24 @@
 html {height: 99.0%; margin: 0px; padding: 0px;}
 body {height: 100%; margin: 0px; padding: 0px; background-color: #000000;}
-#white {position: relative; height: 35%; background-color: #ffffff;}
-#blue {position: relative; height: 35%; background-color: #0000ff;}
+#white {position: relative; height: 35%; background-color: #ffffff; color: #000000;}
+#blue {position: relative; height: 35%; background-color: #0000ff; color: #ffffff; transition: color 1.2s;}
 #time {position: relative; height: 30%; background-color: #000000;}
 
-#white .name {position: absolute; top: 5%; left: 2%; color: #000000;}
-#blue .name {position: absolute; bottom: 5%; left: 2%; color: #ffffff;}
+#white *, #blue *, #time * { z-index: 10;}
 
-#white .name * {color: #000000;}
-#blue .name * {color: #ffffff;}
+#white .name {position: absolute; top: 5%; left: 2%; color: inherit;}
+#blue .name {position: absolute; bottom: 5%; left: 2%; color: inherit;}
 
-#white .points {position: absolute; bottom: 3%; left: 50%; width: 50%; padding-right: 2%; color: #000000;}
-#blue .points {position: absolute; top: 3%; left: 50%; width: 50%; padding-right: 2%; color: #ffffff;}
+#white .name * {color: inherit;}
+#blue .name * {color: inherit;}
+
+#white .points {position: absolute; bottom: 3%; left: 50%; width: 50%; padding-right: 2%; color: inherit;}
+#blue .points {position: absolute; top: 3%; left: 50%; width: 50%; padding-right: 2%; color: inherit;}
 
 .name {font: bold 60px sans-serif; white-space: nowrap; overflow: hidden;}
 .name input {background: none; border: none; font: bold 60px sans-serif;}
 .points {white-space: nowrap;}
+.points th {font: bold 1.5em sans-serif;}
 .point {display: inline-block; font: bold 220px sans-serif; width: 170px; margin: 0px 25px; text-align: center; vertical-align: middle; cursor: pointer;}
 .shido {display: inline-block; width: 100px; height: 130px; margin: 0px; vertical-align: middle; cursor: pointer;}
 
@@ -33,3 +36,7 @@ body {height: 100%; margin: 0px; padding: 0px; background-color: #000000;}
 #fighttime_container {position: absolute; width: 30%; top: 10%; right: 20%; height: 80%; margin-top: -0.5em; white-space: nowrap; color: #cc0000; cursor: pointer;}
 
 div {-moz-user-select: -moz-none; -khtml-user-select: none; -webkit-user-select: none; -o-user-select: none; user-select: none;}
+
+
+#winner {top: 0; left: 0; position: absolute; background: #00000000; z-index: 3;
+         transition: height 1.2s, background 1.2s;}
